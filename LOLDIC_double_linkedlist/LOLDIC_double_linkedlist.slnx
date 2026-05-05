@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="LOLDIC_double_linkedlist/LOLDIC_double_linkedlist.vcxproj" Id="1758b871-c21c-47a8-b44c-4faa401a7313" />
+</Solution>

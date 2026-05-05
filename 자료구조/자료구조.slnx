@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="자료구조/자료구조.vcxproj" Id="ab35027b-8de3-4b63-9dee-9f5333a66dfb" />
+</Solution>
