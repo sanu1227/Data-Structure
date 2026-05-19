@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="save_load_back/save_load_back.vcxproj" />
+  <Project Path="save_load_back/save_load_back.vcxproj" Id="1e562144-cf9a-401c-8109-f2a5b2f4238a" />
 </Solution>
