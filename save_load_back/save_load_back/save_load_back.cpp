@@ -749,7 +749,7 @@ void printMaxOneGapStreak(char board[][SIZE]) {
 
 // ----------------------------------------------------
 // 추가 기능 2
-// 상대방의 일반 / 뛰어있는 3공격, 4공격 방어 위치 탐색
+// 상대방의 일반 연속 3공격 / 4공격 방어 위치 탐색
 // ----------------------------------------------------
 
 
@@ -763,25 +763,28 @@ void markDefensePosition(
 	int y,
 	int level
 ) {
+	// 바둑판 안이 아니면 제외
 	if (!inBoard(x, y)) {
 		return;
 	}
 
+	// 빈칸이 아니면 표시 불가
 	if (board[y][x] != '+') {
 		return;
 	}
 
-	// 같은 칸이 여러 공격에 해당하면
-	// 4공격이 3공격보다 우선
+	// 같은 칸이 여러 공격에 걸리면
+	// 더 위험한 4공격을 우선 저장
 	if (level > defenseLevel[y][x]) {
 		defenseLevel[y][x] = level;
 	}
 }
 
 
-// 한 줄을 배열로 읽은 뒤
-// 3공격 / 4공격 패턴을 검사
-void scanLineForDefensePatterns(
+// 한 줄을 따라가며
+// 상대방의 일반 연속 3개 / 4개를 찾고
+// 그 양끝 빈칸만 방어 위치로 표시
+void scanLineForDefense(
 	char board[][SIZE],
 	int startX,
 	int startY,
@@ -790,114 +793,86 @@ void scanLineForDefensePatterns(
 	char opponentStone,
 	int defenseLevel[][SIZE]
 ) {
-	int xs[SIZE];
-	int ys[SIZE];
-	char values[SIZE];
-	int n = 0;
-
 	int x = startX;
 	int y = startY;
 
-	// 한 줄의 좌표와 값을 배열에 저장
 	while (inBoard(x, y)) {
-		xs[n] = x;
-		ys[n] = y;
-		values[n] = board[y][x];
-		n++;
 
-		x += dx;
-		y += dy;
-	}
-
-
-	// ----------------------------------------------------
-	// 1. 4공격 검사
-	// 길이 5칸 안에 상대 돌 4개 + 빈칸 1개
-	// ----------------------------------------------------
-	for (int i = 0; i <= n - 5; i++) {
-		int stoneCount = 0;
-		int emptyCount = 0;
-		int emptyIndex = -1;
-		int invalid = 0;
-
-		for (int j = 0; j < 5; j++) {
-			char cur = values[i + j];
-
-			if (cur == opponentStone) {
-				stoneCount++;
-			}
-			else if (cur == '+') {
-				emptyCount++;
-				emptyIndex = i + j;
-			}
-			else {
-				// 내 돌이 섞이면 공격 패턴 아님
-				invalid = 1;
-				break;
-			}
+		// 상대 돌이 아닌 경우 다음 칸으로 이동
+		if (board[y][x] != opponentStone) {
+			x += dx;
+			y += dy;
+			continue;
 		}
 
-		if (
-			invalid == 0 &&
-			stoneCount == 4 &&
-			emptyCount == 1
+		// 연속 구간 시작 좌표
+		int streakStartX = x;
+		int streakStartY = y;
+
+		int count = 0;
+
+		// 같은 돌이 연속되는 동안 이동
+		while (
+			inBoard(x, y) &&
+			board[y][x] == opponentStone
 			) {
+			count++;
+			x += dx;
+			y += dy;
+		}
+
+		// 연속 구간 끝 좌표
+		int streakEndX = x - dx;
+		int streakEndY = y - dy;
+
+		// 일반 연속 3개인 경우
+		if (count == 3) {
+			// 시작점 앞쪽 빈칸
 			markDefensePosition(
 				board,
 				defenseLevel,
-				xs[emptyIndex],
-				ys[emptyIndex],
-				4
+				streakStartX - dx,
+				streakStartY - dy,
+				3
 			);
-		}
-	}
 
-
-	// ----------------------------------------------------
-	// 2. 3공격 검사
-	// 길이 4칸 안에 상대 돌 3개 + 빈칸 1개
-	// ----------------------------------------------------
-	for (int i = 0; i <= n - 4; i++) {
-		int stoneCount = 0;
-		int emptyCount = 0;
-		int emptyIndex = -1;
-		int invalid = 0;
-
-		for (int j = 0; j < 4; j++) {
-			char cur = values[i + j];
-
-			if (cur == opponentStone) {
-				stoneCount++;
-			}
-			else if (cur == '+') {
-				emptyCount++;
-				emptyIndex = i + j;
-			}
-			else {
-				// 내 돌이 섞이면 공격 패턴 아님
-				invalid = 1;
-				break;
-			}
-		}
-
-		if (
-			invalid == 0 &&
-			stoneCount == 3 &&
-			emptyCount == 1
-			) {
+			// 끝점 뒤쪽 빈칸
 			markDefensePosition(
 				board,
 				defenseLevel,
-				xs[emptyIndex],
-				ys[emptyIndex],
+				streakEndX + dx,
+				streakEndY + dy,
 				3
 			);
 		}
+
+		// 일반 연속 4개인 경우
+		else if (count == 4) {
+			// 시작점 앞쪽 빈칸
+			markDefensePosition(
+				board,
+				defenseLevel,
+				streakStartX - dx,
+				streakStartY - dy,
+				4
+			);
+
+			// 끝점 뒤쪽 빈칸
+			markDefensePosition(
+				board,
+				defenseLevel,
+				streakEndX + dx,
+				streakEndY + dy,
+				4
+			);
+		}
+
+		// count가 1, 2, 5 이상이면 방어 위치 표시 안 함
 	}
 }
 
 
-// 현재 보드에 상대방의 3 / 4 공격 방어 위치 표시
+// 현재 보드에 상대방의 연속 3 / 4 공격 방어 위치 표시
 void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 	char display[SIZE][SIZE];
 	int defenseLevel[SIZE][SIZE] = { 0 };
@@ -917,7 +892,6 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 		opponentStone = '@';
 	}
 
-
 	// 원본 보드를 출력용 배열에 복사
 	for (int y = 0; y < SIZE; y++) {
 		for (int x = 0; x < SIZE; x++) {
@@ -930,7 +904,7 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 	// 1. 가로 검사
 	// ----------------------------------------------------
 	for (int y = 0; y < SIZE; y++) {
-		scanLineForDefensePatterns(
+		scanLineForDefense(
 			board,
 			0,
 			y,
@@ -946,7 +920,7 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 	// 2. 세로 검사
 	// ----------------------------------------------------
 	for (int x = 0; x < SIZE; x++) {
-		scanLineForDefensePatterns(
+		scanLineForDefense(
 			board,
 			x,
 			0,
@@ -964,7 +938,7 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 
 	// 윗변에서 시작
 	for (int x = 0; x < SIZE; x++) {
-		scanLineForDefensePatterns(
+		scanLineForDefense(
 			board,
 			x,
 			0,
@@ -977,7 +951,7 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 
 	// 왼쪽변에서 시작
 	for (int y = 1; y < SIZE; y++) {
-		scanLineForDefensePatterns(
+		scanLineForDefense(
 			board,
 			0,
 			y,
@@ -995,7 +969,7 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 
 	// 윗변에서 시작
 	for (int x = 0; x < SIZE; x++) {
-		scanLineForDefensePatterns(
+		scanLineForDefense(
 			board,
 			x,
 			0,
@@ -1008,7 +982,7 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 
 	// 오른쪽변에서 시작
 	for (int y = 1; y < SIZE; y++) {
-		scanLineForDefensePatterns(
+		scanLineForDefense(
 			board,
 			SIZE - 1,
 			y,
@@ -1021,7 +995,7 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 
 
 	// ----------------------------------------------------
-	// 방어 위치를 출력용 보드에 반영
+	// 방어 위치를 화면 출력용 배열에 반영
 	// ----------------------------------------------------
 	int markCount = 0;
 
@@ -1053,24 +1027,24 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 
 
 	// ----------------------------------------------------
-	// 좌표 출력
+	// 방어 위치 좌표 출력
 	// ----------------------------------------------------
 	if (markCount == 0) {
-		printf("현재 막아야 할 상대방의 3공격 또는 4공격 위치는 없습니다.\n");
+		printf("현재 막아야 할 상대방의 일반 연속 3공격 또는 4공격 위치는 없습니다.\n");
 	}
 	else {
-		printf("상대방 %s의 3공격 / 4공격 방어 위치를 '|'로 표시했습니다.\n",
+		printf("상대방 %s의 일반 연속 3공격 / 4공격 방어 위치를 '|'로 표시했습니다.\n",
 			stoneName(opponentStone));
 
 		for (int y = 0; y < SIZE; y++) {
 			for (int x = 0; x < SIZE; x++) {
 
 				if (defenseLevel[y][x] == 4) {
-					printf("(%d, %d) : 상대방 4공격 차단 위치\n",
+					printf("(%d, %d) : 상대방 일반 연속 4공격 차단 위치\n",
 						x, y);
 				}
 				else if (defenseLevel[y][x] == 3) {
-					printf("(%d, %d) : 상대방 3공격 차단 위치\n",
+					printf("(%d, %d) : 상대방 일반 연속 3공격 차단 위치\n",
 						x, y);
 				}
 			}
