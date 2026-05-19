@@ -121,21 +121,36 @@ void colstreak(char board[][SIZE]) {
 		int white_max = 0;
 		int black_max = 0;
 
+		int black_start = -1;
+		int white_start = -1;
+		int b_start_save = -1;
+		int w_start_save = -1;
+
 		for (int k = 0; k < SIZE; k++) {
 			if (board[k][i] == '@') {
+				if (black_connect == 0) {
+					black_start = k;
+				}
+
 				black_connect++;
 				white_connect = 0;
 
 				if (black_connect > black_max) {
 					black_max = black_connect;
+					b_start_save = black_start;
 				}
 			}
 			else if (board[k][i] == '#') {
+				if (white_connect == 0) {
+					white_start = k;
+				}
+
 				white_connect++;
 				black_connect = 0;
 
 				if (white_connect > white_max) {
 					white_max = white_connect;
+					w_start_save = white_start;
 				}
 			}
 			else {
@@ -149,47 +164,81 @@ void colstreak(char board[][SIZE]) {
 		}
 		else if (white_max > black_max) {
 			printf("세로 %d | 백돌 %d연속\n", i, white_max);
+			printf("(%d, %d) ~ (%d, %d)\n",
+				i, w_start_save,
+				i, w_start_save + white_max - 1);
 		}
 		else if (white_max < black_max) {
 			printf("세로 %d | 흑돌 %d연속\n", i, black_max);
+			printf("(%d, %d) ~ (%d, %d)\n",
+				i, b_start_save,
+				i, b_start_save + black_max - 1);
 		}
 		else {
 			printf("세로 %d | 연속된 돌의 수가 같습니다. (%d연속)\n", i, white_max);
+			printf("흑돌: (%d, %d) ~ (%d, %d), 백돌: (%d, %d) ~ (%d, %d)\n",
+				i, b_start_save,
+				i, b_start_save + black_max - 1,
+				i, w_start_save,
+				i, w_start_save + white_max - 1);
 		}
 	}
 }
-
-
 // ----------------------------------------------------
 // 기존 기능 3 : 좌상단 -> 우하단 대각선 분석
 // ----------------------------------------------------
 void LTtoRBcross(char board[][SIZE]) {
 
+	// 윗변에서 시작하는 대각선
 	for (int col = 0; col < SIZE; col++) {
-		int i = 0;
-		int k = col;
+		int y = 0;
+		int x = col;
 
 		int white_connect = 0;
 		int black_connect = 0;
 		int white_max = 0;
 		int black_max = 0;
 
-		while (i < SIZE && k < SIZE) {
+		int black_start_x = -1;
+		int black_start_y = -1;
+		int white_start_x = -1;
+		int white_start_y = -1;
 
-			if (board[i][k] == '@') {
+		int b_start_save_x = -1;
+		int b_start_save_y = -1;
+		int w_start_save_x = -1;
+		int w_start_save_y = -1;
+
+		while (y < SIZE && x < SIZE) {
+
+			if (board[y][x] == '@') {
+				if (black_connect == 0) {
+					black_start_x = x;
+					black_start_y = y;
+				}
+
 				black_connect++;
 				white_connect = 0;
 
 				if (black_connect > black_max) {
 					black_max = black_connect;
+					b_start_save_x = black_start_x;
+					b_start_save_y = black_start_y;
 				}
 			}
-			else if (board[i][k] == '#') {
-				black_connect = 0;
+			else if (board[y][x] == '#') {
+				if (white_connect == 0) {
+					white_start_x = x;
+					white_start_y = y;
+				}
+
 				white_connect++;
+				black_connect = 0;
 
 				if (white_connect > white_max) {
 					white_max = white_connect;
+					w_start_save_x = white_start_x;
+					w_start_save_y = white_start_y;
 				}
 			}
 			else {
@@ -197,49 +246,91 @@ void LTtoRBcross(char board[][SIZE]) {
 				white_connect = 0;
 			}
 
-			i++;
-			k++;
+			y++;
+			x++;
 		}
 
 		if (white_max == 0 && black_max == 0) {
-			printf("LT -> RB 대각선 시작점:(0,%d) | 연속된 돌 없음\n", col);
+			printf("LT -> RB 대각선 시작점:(%d,%d) | 연속된 돌 없음\n", col, 0);
 		}
 		else if (white_max > black_max) {
-			printf("LT -> RB 대각선 시작점:(0,%d) | 백돌 %d연속\n", col, white_max);
+			printf("LT -> RB 대각선 시작점:(%d,%d) | 백돌 %d연속\n", col, 0, white_max);
+			printf("(%d, %d) ~ (%d, %d)\n",
+				w_start_save_x, w_start_save_y,
+				w_start_save_x + white_max - 1,
+				w_start_save_y + white_max - 1);
 		}
 		else if (white_max < black_max) {
-			printf("LT -> RB 대각선 시작점:(0,%d) | 흑돌 %d연속\n", col, black_max);
+			printf("LT -> RB 대각선 시작점:(%d,%d) | 흑돌 %d연속\n", col, 0, black_max);
+			printf("(%d, %d) ~ (%d, %d)\n",
+				b_start_save_x, b_start_save_y,
+				b_start_save_x + black_max - 1,
+				b_start_save_y + black_max - 1);
 		}
 		else {
-			printf("LT -> RB 대각선 시작점:(0,%d) | 연속된 돌의 수가 같습니다. (%d연속)\n", col, white_max);
+			printf("LT -> RB 대각선 시작점:(%d,%d) | 연속된 돌의 수가 같습니다. (%d연속)\n",
+				col, 0, white_max);
+
+			printf("흑돌: (%d, %d) ~ (%d, %d), 백돌: (%d, %d) ~ (%d, %d)\n",
+				b_start_save_x, b_start_save_y,
+				b_start_save_x + black_max - 1,
+				b_start_save_y + black_max - 1,
+				w_start_save_x, w_start_save_y,
+				w_start_save_x + white_max - 1,
+				w_start_save_y + white_max - 1);
 		}
 	}
 
+	// 왼쪽변에서 시작하는 대각선
 	for (int row = 1; row < SIZE; row++) {
-		int i = row;
-		int k = 0;
+		int y = row;
+		int x = 0;
 
 		int white_connect = 0;
 		int black_connect = 0;
 		int white_max = 0;
 		int black_max = 0;
 
-		while (i < SIZE && k < SIZE) {
+		int black_start_x = -1;
+		int black_start_y = -1;
+		int white_start_x = -1;
+		int white_start_y = -1;
 
-			if (board[i][k] == '@') {
+		int b_start_save_x = -1;
+		int b_start_save_y = -1;
+		int w_start_save_x = -1;
+		int w_start_save_y = -1;
+
+		while (y < SIZE && x < SIZE) {
+
+			if (board[y][x] == '@') {
+				if (black_connect == 0) {
+					black_start_x = x;
+					black_start_y = y;
+				}
+
 				black_connect++;
 				white_connect = 0;
 
 				if (black_connect > black_max) {
 					black_max = black_connect;
+					b_start_save_x = black_start_x;
+					b_start_save_y = black_start_y;
 				}
 			}
-			else if (board[i][k] == '#') {
-				black_connect = 0;
+			else if (board[y][x] == '#') {
+				if (white_connect == 0) {
+					white_start_x = x;
+					white_start_y = y;
+				}
+
 				white_connect++;
+				black_connect = 0;
 
 				if (white_connect > white_max) {
 					white_max = white_connect;
+					w_start_save_x = white_start_x;
+					w_start_save_y = white_start_y;
 				}
 			}
 			else {
@@ -247,56 +338,96 @@ void LTtoRBcross(char board[][SIZE]) {
 				white_connect = 0;
 			}
 
-			i++;
-			k++;
+			y++;
+			x++;
 		}
 
 		if (white_max == 0 && black_max == 0) {
-			printf("LT -> RB 대각선 시작점:(%d,0) | 연속된 돌 없음\n", row);
+			printf("LT -> RB 대각선 시작점:(%d,%d) | 연속된 돌 없음\n", 0, row);
 		}
 		else if (white_max > black_max) {
-			printf("LT -> RB 대각선 시작점:(%d,0) | 백돌 %d연속\n", row, white_max);
+			printf("LT -> RB 대각선 시작점:(%d,%d) | 백돌 %d연속\n", 0, row, white_max);
+			printf("(%d, %d) ~ (%d, %d)\n",
+				w_start_save_x, w_start_save_y,
+				w_start_save_x + white_max - 1,
+				w_start_save_y + white_max - 1);
 		}
 		else if (white_max < black_max) {
-			printf("LT -> RB 대각선 시작점:(%d,0) | 흑돌 %d연속\n", row, black_max);
+			printf("LT -> RB 대각선 시작점:(%d,%d) | 흑돌 %d연속\n", 0, row, black_max);
+			printf("(%d, %d) ~ (%d, %d)\n",
+				b_start_save_x, b_start_save_y,
+				b_start_save_x + black_max - 1,
+				b_start_save_y + black_max - 1);
 		}
 		else {
-			printf("LT -> RB 대각선 시작점:(%d,0) | 연속된 돌의 수가 같습니다. (%d연속)\n", row, white_max);
+			printf("LT -> RB 대각선 시작점:(%d,%d) | 연속된 돌의 수가 같습니다. (%d연속)\n",
+				0, row, white_max);
+
+			printf("흑돌: (%d, %d) ~ (%d, %d), 백돌: (%d, %d) ~ (%d, %d)\n",
+				b_start_save_x, b_start_save_y,
+				b_start_save_x + black_max - 1,
+				b_start_save_y + black_max - 1,
+				w_start_save_x, w_start_save_y,
+				w_start_save_x + white_max - 1,
+				w_start_save_y + white_max - 1);
 		}
 	}
 }
-
-
 // ----------------------------------------------------
 // 기존 기능 4 : 우상단 -> 좌하단 대각선 분석
 // ----------------------------------------------------
 void RTtoLBcross(char board[][SIZE]) {
 
+	// 윗변에서 시작하는 대각선
 	for (int col = SIZE - 1; col >= 0; col--) {
-		int i = 0;
-		int k = col;
+		int y = 0;
+		int x = col;
 
 		int white_connect = 0;
 		int black_connect = 0;
 		int white_max = 0;
 		int black_max = 0;
 
-		while (i < SIZE && k >= 0) {
+		int black_start_x = -1;
+		int black_start_y = -1;
+		int white_start_x = -1;
+		int white_start_y = -1;
 
-			if (board[i][k] == '@') {
+		int b_start_save_x = -1;
+		int b_start_save_y = -1;
+		int w_start_save_x = -1;
+		int w_start_save_y = -1;
+
+		while (y < SIZE && x >= 0) {
+
+			if (board[y][x] == '@') {
+				if (black_connect == 0) {
+					black_start_x = x;
+					black_start_y = y;
+				}
+
 				black_connect++;
 				white_connect = 0;
 
 				if (black_connect > black_max) {
 					black_max = black_connect;
+					b_start_save_x = black_start_x;
+					b_start_save_y = black_start_y;
 				}
 			}
-			else if (board[i][k] == '#') {
-				black_connect = 0;
+			else if (board[y][x] == '#') {
+				if (white_connect == 0) {
+					white_start_x = x;
+					white_start_y = y;
+				}
+
 				white_connect++;
+				black_connect = 0;
 
 				if (white_connect > white_max) {
 					white_max = white_connect;
+					w_start_save_x = white_start_x;
+					w_start_save_y = white_start_y;
 				}
 			}
 			else {
@@ -304,49 +435,91 @@ void RTtoLBcross(char board[][SIZE]) {
 				white_connect = 0;
 			}
 
-			i++;
-			k--;
+			y++;
+			x--;
 		}
 
 		if (white_max == 0 && black_max == 0) {
-			printf("RT -> LB 대각선 시작점:(0,%d) | 연속된 돌 없음\n", col);
+			printf("RT -> LB 대각선 시작점:(%d,%d) | 연속된 돌 없음\n", col, 0);
 		}
 		else if (white_max > black_max) {
-			printf("RT -> LB 대각선 시작점:(0,%d) | 백돌 %d연속\n", col, white_max);
+			printf("RT -> LB 대각선 시작점:(%d,%d) | 백돌 %d연속\n", col, 0, white_max);
+			printf("(%d, %d) ~ (%d, %d)\n",
+				w_start_save_x, w_start_save_y,
+				w_start_save_x - white_max + 1,
+				w_start_save_y + white_max - 1);
 		}
 		else if (white_max < black_max) {
-			printf("RT -> LB 대각선 시작점:(0,%d) | 흑돌 %d연속\n", col, black_max);
+			printf("RT -> LB 대각선 시작점:(%d,%d) | 흑돌 %d연속\n", col, 0, black_max);
+			printf("(%d, %d) ~ (%d, %d)\n",
+				b_start_save_x, b_start_save_y,
+				b_start_save_x - black_max + 1,
+				b_start_save_y + black_max - 1);
 		}
 		else {
-			printf("RT -> LB 대각선 시작점:(0,%d) | 연속된 돌의 수가 같습니다. (%d연속)\n", col, white_max);
+			printf("RT -> LB 대각선 시작점:(%d,%d) | 연속된 돌의 수가 같습니다. (%d연속)\n",
+				col, 0, white_max);
+
+			printf("흑돌: (%d, %d) ~ (%d, %d), 백돌: (%d, %d) ~ (%d, %d)\n",
+				b_start_save_x, b_start_save_y,
+				b_start_save_x - black_max + 1,
+				b_start_save_y + black_max - 1,
+				w_start_save_x, w_start_save_y,
+				w_start_save_x - white_max + 1,
+				w_start_save_y + white_max - 1);
 		}
 	}
 
+	// 오른쪽변에서 시작하는 대각선
 	for (int row = 1; row < SIZE; row++) {
-		int i = row;
-		int k = SIZE - 1;
+		int y = row;
+		int x = SIZE - 1;
 
 		int white_connect = 0;
 		int black_connect = 0;
 		int white_max = 0;
 		int black_max = 0;
 
-		while (i < SIZE && k >= 0) {
+		int black_start_x = -1;
+		int black_start_y = -1;
+		int white_start_x = -1;
+		int white_start_y = -1;
 
-			if (board[i][k] == '@') {
+		int b_start_save_x = -1;
+		int b_start_save_y = -1;
+		int w_start_save_x = -1;
+		int w_start_save_y = -1;
+
+		while (y < SIZE && x >= 0) {
+
+			if (board[y][x] == '@') {
+				if (black_connect == 0) {
+					black_start_x = x;
+					black_start_y = y;
+				}
+
 				black_connect++;
 				white_connect = 0;
 
 				if (black_connect > black_max) {
 					black_max = black_connect;
+					b_start_save_x = black_start_x;
+					b_start_save_y = black_start_y;
 				}
 			}
-			else if (board[i][k] == '#') {
-				black_connect = 0;
+			else if (board[y][x] == '#') {
+				if (white_connect == 0) {
+					white_start_x = x;
+					white_start_y = y;
+				}
+
 				white_connect++;
+				black_connect = 0;
 
 				if (white_connect > white_max) {
 					white_max = white_connect;
+					w_start_save_x = white_start_x;
+					w_start_save_y = white_start_y;
 				}
 			}
 			else {
@@ -354,25 +527,41 @@ void RTtoLBcross(char board[][SIZE]) {
 				white_connect = 0;
 			}
 
-			i++;
-			k--;
+			y++;
+			x--;
 		}
 
 		if (white_max == 0 && black_max == 0) {
-			printf("RT -> LB 대각선 시작점:(%d,%d) | 연속된 돌 없음\n", row, SIZE - 1);
+			printf("RT -> LB 대각선 시작점:(%d,%d) | 연속된 돌 없음\n", SIZE - 1, row);
 		}
 		else if (white_max > black_max) {
-			printf("RT -> LB 대각선 시작점:(%d,%d) | 백돌 %d연속\n", row, SIZE - 1, white_max);
+			printf("RT -> LB 대각선 시작점:(%d,%d) | 백돌 %d연속\n", SIZE - 1, row, white_max);
+			printf("(%d, %d) ~ (%d, %d)\n",
+				w_start_save_x, w_start_save_y,
+				w_start_save_x - white_max + 1,
+				w_start_save_y + white_max - 1);
 		}
 		else if (white_max < black_max) {
-			printf("RT -> LB 대각선 시작점:(%d,%d) | 흑돌 %d연속\n", row, SIZE - 1, black_max);
+			printf("RT -> LB 대각선 시작점:(%d,%d) | 흑돌 %d연속\n", SIZE - 1, row, black_max);
+			printf("(%d, %d) ~ (%d, %d)\n",
+				b_start_save_x, b_start_save_y,
+				b_start_save_x - black_max + 1,
+				b_start_save_y + black_max - 1);
 		}
 		else {
-			printf("RT -> LB 대각선 시작점:(%d,%d) | 연속된 돌의 수가 같습니다. (%d연속)\n", row, SIZE - 1, white_max);
+			printf("RT -> LB 대각선 시작점:(%d,%d) | 연속된 돌의 수가 같습니다. (%d연속)\n",
+				SIZE - 1, row, white_max);
+
+			printf("흑돌: (%d, %d) ~ (%d, %d), 백돌: (%d, %d) ~ (%d, %d)\n",
+				b_start_save_x, b_start_save_y,
+				b_start_save_x - black_max + 1,
+				b_start_save_y + black_max - 1,
+				w_start_save_x, w_start_save_y,
+				w_start_save_x - white_max + 1,
+				w_start_save_y + white_max - 1);
 		}
 	}
 }
-
 
 // ----------------------------------------------------
 // 추가 기능 1
@@ -560,106 +749,133 @@ void printMaxOneGapStreak(char board[][SIZE]) {
 
 // ----------------------------------------------------
 // 추가 기능 2
-// 상대방의 3공격 / 4공격 방어 위치 탐색
+// 상대방의 일반 연속 3공격 / 4공격 방어 위치 탐색
 // ----------------------------------------------------
-int countSameStone(
+
+
+// 방어 위치 저장
+// level = 3 : 3공격 차단 위치
+// level = 4 : 4공격 차단 위치
+void markDefensePosition(
 	char board[][SIZE],
+	int defenseLevel[][SIZE],
 	int x,
 	int y,
+	int level
+) {
+	// 바둑판 안이 아니면 제외
+	if (!inBoard(x, y)) {
+		return;
+	}
+
+	// 빈칸이 아니면 표시 불가
+	if (board[y][x] != '+') {
+		return;
+	}
+
+	// 같은 칸이 여러 공격에 걸리면
+	// 더 위험한 4공격을 우선 저장
+	if (level > defenseLevel[y][x]) {
+		defenseLevel[y][x] = level;
+	}
+}
+
+
+// 한 줄을 따라가며
+// 상대방의 일반 연속 3개 / 4개를 찾고
+// 그 양끝 빈칸만 방어 위치로 표시
+void scanLineForDefense(
+	char board[][SIZE],
+	int startX,
+	int startY,
 	int dx,
 	int dy,
-	char stone
+	char opponentStone,
+	int defenseLevel[][SIZE]
 ) {
-	int count = 0;
+	int x = startX;
+	int y = startY;
 
-	x += dx;
-	y += dy;
+	while (inBoard(x, y)) {
 
-	while (inBoard(x, y) && board[y][x] == stone) {
-		count++;
-		x += dx;
-		y += dy;
-	}
-
-	return count;
-}
-
-int maxLineIfPlaced(
-	char board[][SIZE],
-	int x,
-	int y,
-	char stone
-) {
-	int maxLen = 1;
-
-	int dirs[4][2] = {
-		{1, 0},   // 가로
-		{0, 1},   // 세로
-		{1, 1},   // 좌상단 -> 우하단
-		{1, -1}   // 우상단 -> 좌하단
-	};
-
-	for (int i = 0; i < 4; i++) {
-		int dx = dirs[i][0];
-		int dy = dirs[i][1];
-
-		int len =
-			1 +
-			countSameStone(board, x, y, dx, dy, stone) +
-			countSameStone(board, x, y, -dx, -dy, stone);
-
-		if (len > maxLen) {
-			maxLen = len;
+		// 상대 돌이 아닌 경우 다음 칸으로 이동
+		if (board[y][x] != opponentStone) {
+			x += dx;
+			y += dy;
+			continue;
 		}
-	}
 
-	return maxLen;
+		// 연속 구간 시작 좌표
+		int streakStartX = x;
+		int streakStartY = y;
+
+		int count = 0;
+
+		// 같은 돌이 연속되는 동안 이동
+		while (
+			inBoard(x, y) &&
+			board[y][x] == opponentStone
+			) {
+			count++;
+			x += dx;
+			y += dy;
+		}
+
+		// 연속 구간 끝 좌표
+		int streakEndX = x - dx;
+		int streakEndY = y - dy;
+
+		// 일반 연속 3개인 경우
+		if (count == 3) {
+			// 시작점 앞쪽 빈칸
+			markDefensePosition(
+				board,
+				defenseLevel,
+				streakStartX - dx,
+				streakStartY - dy,
+				3
+			);
+
+			// 끝점 뒤쪽 빈칸
+			markDefensePosition(
+				board,
+				defenseLevel,
+				streakEndX + dx,
+				streakEndY + dy,
+				3
+			);
+		}
+
+		// 일반 연속 4개인 경우
+		else if (count == 4) {
+			// 시작점 앞쪽 빈칸
+			markDefensePosition(
+				board,
+				defenseLevel,
+				streakStartX - dx,
+				streakStartY - dy,
+				4
+			);
+
+			// 끝점 뒤쪽 빈칸
+			markDefensePosition(
+				board,
+				defenseLevel,
+				streakEndX + dx,
+				streakEndY + dy,
+				4
+			);
+		}
+
+		// count가 1, 2, 5 이상이면 방어 위치 표시 안 함
+	}
 }
 
-/*
-반환값
-0 : 공격 없음
-3 : 상대방 3공격 차단 위치
-4 : 상대방 4공격 차단 위치
-*/
-int getDefenseLevel(
-	char board[][SIZE],
-	int x,
-	int y,
-	char opponentStone
-) {
-	if (board[y][x] != '+') {
-		return 0;
-	}
 
-	board[y][x] = opponentStone;
-
-	int lineLen = maxLineIfPlaced(board, x, y, opponentStone);
-
-	board[y][x] = '+';
-
-	// 상대가 이 위치에 두면 오목 완성
-	// 현재는 상대의 4공격을 막아야 하는 칸
-	if (lineLen >= 5) {
-		return 4;
-	}
-
-	// 상대가 이 위치에 두면 4목 완성
-	// 현재는 상대의 3공격을 막아야 하는 칸
-	if (lineLen == 4) {
-		return 3;
-	}
-
-	return 0;
-}
-
+// 현재 보드에 상대방의 연속 3 / 4 공격 방어 위치 표시
 void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 	char display[SIZE][SIZE];
-
-	int markX[SIZE * SIZE];
-	int markY[SIZE * SIZE];
-	int markLevel[SIZE * SIZE];
-	int markCount = 0;
+	int defenseLevel[SIZE][SIZE] = { 0 };
 
 	char opponentStone;
 
@@ -683,22 +899,119 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 		}
 	}
 
-	// 방어해야 하는 위치 찾기
+
+	// ----------------------------------------------------
+	// 1. 가로 검사
+	// ----------------------------------------------------
+	for (int y = 0; y < SIZE; y++) {
+		scanLineForDefense(
+			board,
+			0,
+			y,
+			1,
+			0,
+			opponentStone,
+			defenseLevel
+		);
+	}
+
+
+	// ----------------------------------------------------
+	// 2. 세로 검사
+	// ----------------------------------------------------
+	for (int x = 0; x < SIZE; x++) {
+		scanLineForDefense(
+			board,
+			x,
+			0,
+			0,
+			1,
+			opponentStone,
+			defenseLevel
+		);
+	}
+
+
+	// ----------------------------------------------------
+	// 3. 좌상단 -> 우하단 대각선 검사
+	// ----------------------------------------------------
+
+	// 윗변에서 시작
+	for (int x = 0; x < SIZE; x++) {
+		scanLineForDefense(
+			board,
+			x,
+			0,
+			1,
+			1,
+			opponentStone,
+			defenseLevel
+		);
+	}
+
+	// 왼쪽변에서 시작
+	for (int y = 1; y < SIZE; y++) {
+		scanLineForDefense(
+			board,
+			0,
+			y,
+			1,
+			1,
+			opponentStone,
+			defenseLevel
+		);
+	}
+
+
+	// ----------------------------------------------------
+	// 4. 우상단 -> 좌하단 대각선 검사
+	// ----------------------------------------------------
+
+	// 윗변에서 시작
+	for (int x = 0; x < SIZE; x++) {
+		scanLineForDefense(
+			board,
+			x,
+			0,
+			-1,
+			1,
+			opponentStone,
+			defenseLevel
+		);
+	}
+
+	// 오른쪽변에서 시작
+	for (int y = 1; y < SIZE; y++) {
+		scanLineForDefense(
+			board,
+			SIZE - 1,
+			y,
+			-1,
+			1,
+			opponentStone,
+			defenseLevel
+		);
+	}
+
+
+	// ----------------------------------------------------
+	// 방어 위치를 화면 출력용 배열에 반영
+	// ----------------------------------------------------
+	int markCount = 0;
+
 	for (int y = 0; y < SIZE; y++) {
 		for (int x = 0; x < SIZE; x++) {
-			int level = getDefenseLevel(board, x, y, opponentStone);
-
-			if (level != 0) {
+			if (defenseLevel[y][x] != 0) {
 				display[y][x] = '|';
-
-				markX[markCount] = x;
-				markY[markCount] = y;
-				markLevel[markCount] = level;
 				markCount++;
 			}
 		}
 	}
 
+
+	// ----------------------------------------------------
+	// 바둑판 출력
+	// ----------------------------------------------------
 	printf("\n");
 	printf("[현재 바둑판]\n");
 	printf("기호 안내: @ = 흑돌, # = 백돌, + = 빈칸, | = 방어 필요 위치\n\n");
@@ -712,21 +1025,28 @@ void printBoardWithDefenseMarks(char board[][SIZE], int turn) {
 
 	printf("\n");
 
+
+	// ----------------------------------------------------
+	// 방어 위치 좌표 출력
+	// ----------------------------------------------------
 	if (markCount == 0) {
-		printf("현재 즉시 막아야 할 상대방의 3공격 또는 4공격 위치는 없습니다.\n");
+		printf("현재 막아야 할 상대방의 일반 연속 3공격 또는 4공격 위치는 없습니다.\n");
 	}
 	else {
-		printf("상대방 %s의 공격을 막아야 하는 위치를 '|'로 표시했습니다.\n",
+		printf("상대방 %s의 일반 연속 3공격 / 4공격 방어 위치를 '|'로 표시했습니다.\n",
 			stoneName(opponentStone));
 
-		for (int i = 0; i < markCount; i++) {
-			if (markLevel[i] == 4) {
-				printf("(%d, %d) : 상대방 4공격 차단 위치\n",
-					markX[i], markY[i]);
-			}
-			else if (markLevel[i] == 3) {
-				printf("(%d, %d) : 상대방 3공격 차단 위치\n",
-					markX[i], markY[i]);
+		for (int y = 0; y < SIZE; y++) {
+			for (int x = 0; x < SIZE; x++) {
+
+				if (defenseLevel[y][x] == 4) {
+					printf("(%d, %d) : 상대방 일반 연속 4공격 차단 위치\n",
+						x, y);
+				}
+				else if (defenseLevel[y][x] == 3) {
+					printf("(%d, %d) : 상대방 일반 연속 3공격 차단 위치\n",
+						x, y);
+				}
 			}
 		}
 	}
