@@ -1088,25 +1088,27 @@ void savegame(char board[][SIZE], int turn, int blackcount, int whitecount, int 
 	FILE* fp;
 	fp = fopen("save.txt", "w");
 	if (fp == NULL) {
-		printf("저장 파일을 만들 수 없습니다.\n");
+		printf("FILE cant save");
 		return;
 	}
+
 	fprintf(fp, "%d\n", turn);
 	fprintf(fp, "%d %d\n", blackcount, whitecount);
 	for (int y = 0; y < SIZE; ++y) {
 		for (int x = 0; x < SIZE; ++x) {
-			fprintf(fp, "%c\n", board[y][x]);
+			fprintf(fp, "%c", board[y][x]);
 		}
 		fprintf(fp, "\n");
 	}
-	fprintf(fp, "%d\n", top + 1);
+
+	fprintf(fp, "%d\n", top+1);
 	for (int i = 0; i < top + 1; ++i) {
 		fprintf(fp, "%d %d %c\n", stack[i].x, stack[i].y, stack[i].stone);
 	}
 
 	fprintf(fp, "%d\n", top2 + 1);
 	for (int i = 0; i < top2 + 1; ++i) {
-		fprintf(fp, "%d %d %c\n", stack2[i].x, stack2[i].y, stack2[i].stone);
+		fprintf(fp, "%d %d %c", stack2[i].x, stack2[i].y, stack2[i].stone);
 	}
 
 	fclose(fp);
@@ -1114,36 +1116,30 @@ void savegame(char board[][SIZE], int turn, int blackcount, int whitecount, int 
 	return;
 }
 
-void loadgame(char board[][SIZE], int* turn, int* blackcount, int* whitecount, int* top, put stack[], int* top2, put stack2[]) {
+void loadgame(char board[SIZE][SIZE], int* turn, int* blackcount, int* whitecount, int* top, put stack[], int* top2, put stack2[]) {
 	FILE* fp;
 	fp = fopen("save.txt", "r");
 	if (fp == NULL) {
-		printf("저장 파일을 불러올 수 없습니다.\n");
+		printf("FILE load false");
 		return;
 	}
-	char loadboard[SIZE][SIZE];
-	int loadturn;
-	int loadblack;
-	int loadwhite;
-	
-	int loadtop;
-	char loadstone;
-	int loadx;
-	int loady;
 
-	int loadtop2;
-	int loadx2;
-	int loady2;
-	char loadstone2;
+	char loadboard[SIZE][SIZE];
+	int loadturn, loadblackcount, loadwhitecount;
 
 	fscanf(fp, "%d", &loadturn);
-	fscanf(fp, "%d %d", &loadblack, &loadwhite);
+	fscanf(fp, "%d %d", &loadblackcount, &loadwhitecount);
 	for (int y = 0; y < SIZE; ++y) {
 		for (int x = 0; x < SIZE; ++x) {
 			fscanf(fp, " %c", &loadboard[y][x]);
 			board[y][x] = loadboard[y][x];
 		}
 	}
+
+	int loadtop, loadtop2;
+	int loadx, loady;
+	char loadstone;
+
 	fscanf(fp, "%d", &loadtop);
 	for (int i = 0; i < loadtop; ++i) {
 		fscanf(fp, "%d %d %c", &loadx, &loady, &loadstone);
@@ -1154,30 +1150,32 @@ void loadgame(char board[][SIZE], int* turn, int* blackcount, int* whitecount, i
 
 	fscanf(fp, "%d", &loadtop2);
 	for (int i = 0; i < loadtop2; ++i) {
-		fscanf(fp, "%d %d %c", &loadx2, &loady2, &loadstone2);
-		stack2[i].x = loadx2;
-		stack2[i].y = loady2;
-		stack2[i].stone = loadstone2;
+		fscanf(fp, "%d %d %c", &loadx, &loady, &loadstone);
+		stack2[i].x = loadx;
+		stack2[i].y = loady;
+		stack2[i].stone = loadstone;
 	}
+
 	*turn = loadturn;
-	*blackcount = loadblack;
-	*whitecount = loadwhite;
-	*top = loadtop - 1;
-	*top2 = loadtop2 - 1;
+	*blackcount = loadblackcount;
+	*whitecount = loadwhitecount;
+	*top = loadtop -1;
+	*top2 = loadtop2 -1;
 
 	fclose(fp);
+	printf("game loaded");
 	return;
 }
 
-void pushstack(put stack[], int x, int y, int* top, char stone) {
+void pushstack(int* top, put stack[], int x, int y, char stone) {
 	if (*top >= max_stone - 1) {
 		return;
 	}
-
 	(*top)++;
 	stack[*top].x = x;
 	stack[*top].y = y;
 	stack[*top].stone = stone;
+	return;
 }
 
 int popstack(put stack[], int* top, put* outstack) {
@@ -1196,10 +1194,8 @@ int main() {
 	char board[SIZE][SIZE];
 
 	put stack[max_stone];
-	int top = -1;
-
 	put stack2[max_stone];
-	int top2 = -1;
+	int top, top2;
 
 	int x, y;
 	char input[150];
@@ -1238,7 +1234,7 @@ int main() {
 
 		printf("돌을 놓으려는 좌표를 입력하세요.\n");
 		printf("(예: 0 0, 1 3)\n");
-		printf("S - save, L - load, U - back, R - back return\n");
+		printf("S - save, L - load, U - back, R - back return");
 
 		fgets(input, sizeof(input), stdin);
 
@@ -1257,37 +1253,32 @@ int main() {
 			system("cls");
 			put lastput;
 			if (popstack(stack, &top, &lastput) == 0) {
-				printf("돌을 무를수 없습니다.\n");
+				printf("back false");
 				continue;
 			}
-
-			pushstack(stack2, lastput.x, lastput.y, &top2, lastput.stone);
+			pushstack(&top2, stack2, lastput.x, lastput.y, lastput.stone);
 
 			board[lastput.y][lastput.x] = '+';
 			if (lastput.stone == '@') {
-				turn = 0;
 				blackcount--;
+				turn = 0;
 			}
 			else if (lastput.stone == '#') {
-				turn = 1;
 				whitecount--;
+				turn = 1;
 			}
 
 			printBoardWithDefenseMarks(board, turn);
 			continue;
 		}
-
 		if (input[0] == 'R') {
 			system("cls");
-
 			put lastback;
-
 			if (popstack(stack2, &top2, &lastback) == 0) {
-				printf("unknow back");
+				printf("back return false");
 				continue;
 			}
 
-			board[lastback.y][lastback.x] = lastback.stone;
 			if (lastback.stone == '@') {
 				blackcount++;
 				turn = 1;
@@ -1296,8 +1287,9 @@ int main() {
 				whitecount++;
 				turn = 0;
 			}
+			board[lastback.y][lastback.x] = lastback.stone;
 
-			pushstack(stack, lastback.x, lastback.y, &top, lastback.stone);
+			pushstack(&top, stack, lastback.x, lastback.y, lastback.stone);
 			printBoardWithDefenseMarks(board, turn);
 			continue;
 		}
@@ -1317,19 +1309,19 @@ int main() {
 			printf("<<이미 돌이 놓여 있습니다>>\n");
 		}
 		else {
-			char stackstone;
+			char laststone;
 			if (turn == 0) {
 				board[y][x] = '@';
 				blackcount++;
-				stackstone = '@';
+				laststone = '@';
 			}
 			else {
 				board[y][x] = '#';
 				whitecount++;
-				stackstone = '#';
+				laststone = '#';
 			}
 
-			pushstack(stack, x, y, &top, stackstone);
+			pushstack(&top, stack, x, y, laststone);
 			top2 = -1;
 			turn = 1 - turn;
 		}
