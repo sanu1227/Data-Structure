@@ -50,7 +50,7 @@ Data-Structure/
 ### Visual Studio
 
 1. `.slnx`를 열 수 있는 Visual Studio와 **C++ 데스크톱 개발** 도구를 준비합니다.
-2. 프로젝트 설정의 **MSVC `v145`** 도구 집합과 **Windows SDK `10.0`**을 확인합니다.
+2. 프로젝트 설정의 **MSVC `v145`** 도구 집합과 **Windows SDK 10.0**을 확인합니다.
 3. [Project3.slnx](Project3/Project3.slnx)를 열고 `Debug` / `x64` 구성을 선택합니다.
 4. 프로젝트의 디버깅 작업 디렉터리를 `$(ProjectDir)`로 설정해 [test.txt](Project3/Project3/test.txt)를 찾을 수 있게 합니다.
 5. 프로젝트를 빌드한 뒤 실행합니다. 콘솔에 입력 레코드가 이름순으로 출력됩니다.
