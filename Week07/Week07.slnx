@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="자구 7주차/자구 7주차.vcxproj" />
+  <Project Path="Week07/Week07.vcxproj" />
 </Solution>
