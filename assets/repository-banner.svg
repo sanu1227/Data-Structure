@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title description">
+  <title id="title">Data Structures</title>
+  <desc id="description">Engineering Foundations, collection 01. A binary tree and linked list illustrate C and C++ coursework.</desc>
+  <path fill="#0b1220" d="M0 0H1280V360H0Z"/>
+  <path fill="#4dd4bd" d="M64 214H136V218H64Z"/>
+  <text x="64" y="65" fill="#4dd4bd" font-family="Consolas, monospace" font-size="15" letter-spacing="2">ENGINEERING FOUNDATIONS / 01</text>
+  <text x="64" y="130" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="58" font-weight="700">Data Structures</text>
+  <text x="64" y="180" fill="#9fb0c5" font-family="Segoe UI, Arial, sans-serif" font-size="22">Pointers, trees, and stateful programs.</text>
+  <text x="64" y="295" fill="#b7c7d9" font-family="Consolas, monospace" font-size="14" letter-spacing="1">C / C++   ·   LINKED LISTS   ·   BINARY TREES</text>
+  <path fill="none" stroke="#233246" stroke-width="1" d="M850 40H1190V320H850Z"/>
+  <path fill="none" stroke="#4dd4bd" stroke-width="2" d="M1020 107V126M1020 126H920V151M1020 126H1120V151"/>
+  <path fill="#122b31" stroke="#4dd4bd" stroke-width="2" d="M1000 67H1040Q1048 67 1048 75V99Q1048 107 1040 107H1000Q992 107 992 99V75Q992 67 1000 67Z"/>
+  <path fill="#101e2c" stroke="#4dd4bd" stroke-width="2" d="M900 151H940Q948 151 948 159V183Q948 191 940 191H900Q892 191 892 183V159Q892 151 900 151Z"/>
+  <path fill="#101e2c" stroke="#4dd4bd" stroke-width="2" d="M1100 151H1140Q1148 151 1148 159V183Q1148 191 1140 191H1100Q1092 191 1092 183V159Q1092 151 1100 151Z"/>
+  <text x="1020" y="94" text-anchor="middle" fill="#ffffff" font-family="Consolas, monospace" font-size="20">42</text>
+  <text x="920" y="178" text-anchor="middle" fill="#dce8f2" font-family="Consolas, monospace" font-size="20">18</text>
+  <text x="1120" y="178" text-anchor="middle" fill="#dce8f2" font-family="Consolas, monospace" font-size="20">64</text>
+  <path fill="none" stroke="#233246" stroke-width="1" d="M876 217H1164"/>
+  <path fill="none" stroke="#4dd4bd" stroke-width="2" d="M944 260H992M980 254L992 260L980 266M1048 260H1096M1084 254L1096 260L1084 266"/>
+  <path fill="#101e2c" stroke="#567086" stroke-width="1.5" d="M896 240H936Q944 240 944 248V272Q944 280 936 280H896Q888 280 888 272V248Q888 240 896 240Z"/>
+  <path fill="#101e2c" stroke="#567086" stroke-width="1.5" d="M1000 240H1040Q1048 240 1048 248V272Q1048 280 1040 280H1000Q992 280 992 272V248Q992 240 1000 240Z"/>
+  <path fill="#101e2c" stroke="#567086" stroke-width="1.5" d="M1104 240H1144Q1152 240 1152 248V272Q1152 280 1144 280H1104Q1096 280 1096 272V248Q1096 240 1104 240Z"/>
+  <text x="916" y="267" text-anchor="middle" fill="#dce8f2" font-family="Consolas, monospace" font-size="20">A</text>
+  <text x="1020" y="267" text-anchor="middle" fill="#dce8f2" font-family="Consolas, monospace" font-size="20">B</text>
+  <text x="1124" y="267" text-anchor="middle" fill="#dce8f2" font-family="Consolas, monospace" font-size="20">C</text>
+  <text x="1020" y="307" text-anchor="middle" fill="#758da5" font-family="Consolas, monospace" font-size="11" letter-spacing="1.5">LINK / SEARCH / TRAVERSE</text>
+</svg>

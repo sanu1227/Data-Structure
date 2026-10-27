@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNING
+﻿#define _CRT_SECURE_NO_WARNINGS
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -39,6 +39,9 @@ double gettime() {
 
 snode* arrytosl(data data) {
 	snode* newnode = (snode*)malloc(sizeof(snode));
+	if (newnode == NULL) {
+		return NULL;
+	}
 
 	newnode->data = data;
 
@@ -52,10 +55,14 @@ snode* arrytosl(data data) {
 		newnode->next = head;
 		tail = newnode;
 	}
+	return newnode;
 }
 
 tnode* arrytobt(data data) {
 	tnode* newnode = (tnode*)malloc(sizeof(tnode));
+	if (newnode == NULL) {
+		return NULL;
+	}
 	tnode* parent;
 	tnode* cur;
 	int cmp;
@@ -66,7 +73,7 @@ tnode* arrytobt(data data) {
 
 	if (root == NULL) {
 		root = newnode;
-		return;
+		return newnode;
 	}
 
 	cur = root;
@@ -91,6 +98,7 @@ tnode* arrytobt(data data) {
 	else {
 		parent->right = newnode;
 	}
+	return newnode;
 }
 
 tnode* search_bt(char name[]) {
@@ -116,14 +124,14 @@ tnode* search_bt(char name[]) {
 }
 
 void printallbt(tnode* cur) {
-	tnode* cur;
 	if (cur == NULL) {
 		return;
 	}
 	
 	printallbt(cur->left);
 
-	printf("");
+	printf("%s %s %d %d %d\n",
+		cur->data.pos, cur->data.name, cur->data.hp, cur->data.atk, cur->data.def);
 	printallbt(cur->right);
 
 }
@@ -140,7 +148,6 @@ int delete_bt(char name[]) {
 	parent = NULL;
 
 	while (cur != NULL) {
-		parent = cur;
 		cmp = strcmp(name, cur->data.name);
 
 		if (cmp == 0) {
@@ -169,7 +176,7 @@ int delete_bt(char name[]) {
 		}
 
 		if (parent == NULL) {
-			child = root;
+			root = child;
 		}
 		else if (parent->left == cur) {
 			parent->left = child;
@@ -199,4 +206,27 @@ int delete_bt(char name[]) {
 		succ_parent->right = child;
 	}
 
+	free(succ);
+	return 1;
+}
+
+int main() {
+	FILE* fp = fopen("test.txt", "r");
+	if (fp == NULL) {
+		perror("test.txt");
+		return 1;
+	}
+
+	data entry;
+	while (fscanf(fp, "%99s %99s %d %d %d", entry.pos, entry.name,
+		&entry.hp, &entry.atk, &entry.def) == 5) {
+		if (arrytosl(entry) == NULL || arrytobt(entry) == NULL) {
+			fclose(fp);
+			fprintf(stderr, "Unable to allocate a node.\n");
+			return 1;
+		}
+	}
+	fclose(fp);
+	printallbt(root);
+	return 0;
 }
